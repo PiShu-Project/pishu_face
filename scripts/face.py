@@ -168,9 +168,8 @@ class EyeWindow(Gtk.Window):
 
     def on_mouse_click(self, w, event):
         if self.event_last_time != event.time:
-            print 'Click !'
-            print event.time
             self.event_last_time = event.time
+            self.pub_face_touched.publish(True)
 
 
     def timeout(self):
