@@ -16,6 +16,7 @@ import time
 
 import rospy
 
+from std_msgs.msg import Bool
 from pishu_msgs.msg import EmotionalState, MultiFaces, FacePosition
 
 pi = math.pi
@@ -127,9 +128,19 @@ class EyeWindow(Gtk.Window):
     def __init__(self):
         super(EyeWindow, self).__init__()
 
+        #init ROS
+
+        rospy.init_node('face', anonymous=False)
+
+        rospy.Subscriber("cortex/emotion", EmotionalState, emotion_callback)
+
+        self.pub_face_touched = rospy.Publisher("face/touched", Bool, queue_size = 5)
+
         self.eye = Eye()
 
         self.init_ui()
+
+        self.event_last_time = 0 # needed to not detect events twice
 
 
     def init_ui(self):    
@@ -156,7 +167,10 @@ class EyeWindow(Gtk.Window):
         self.get_window().set_cursor(cursor)
 
     def on_mouse_click(self, w, event):
-        print 'Click !'
+        if self.event_last_time != event.time:
+            print 'Click !'
+            print event.time
+            self.event_last_time = event.time
 
 
     def timeout(self):
@@ -285,10 +299,6 @@ def main():
     context['happy'] = 0
     context['angry'] = 0
     context['interest'] = 0
-
-    rospy.init_node('face', anonymous=False)
-
-    rospy.Subscriber("cortex/emotion", EmotionalState, emotion_callback)
 
     app = EyeWindow()
 
