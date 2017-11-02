@@ -49,8 +49,23 @@ class Eye:
         self.emo_mat = np.zeros((9, 4))
 
         # params for neutral
-        self.emo_mat[:, 0] = np.array([0.35, -0.25, -0.25, 0.0,
-                                                         -0.35, 0.2, 0.2, 0.0,
+        self.emo_mat[:, 0] = np.array([0.30, -0.10, -0.10, 0.0,
+                                                         -0.30, 0.1, 0.1, 0.0,
+                                                         0.08])
+
+        # params for sad
+        self.emo_mat[:, 1] = np.array([0.35, -0.25, -0.25, 0.0,
+                                                         -0.2, -0.08, -0.08, 0.0,
+                                                         0.08])
+
+        # params for scared ?
+        self.emo_mat[:, 1] = np.array([0.35, -0.3, -0.3, 0.0,
+                                                         -0.35, 0.25, 0.25, 0.0,
+                                                         0.12])
+
+        # params for happy
+        self.emo_mat[:, 1] = np.array([0.3, -0.15, -0.15, 0.0,
+                                                         -0.25, 0.05, 0.05, 0.0,
                                                          0.08])
 
         # params for angry
@@ -83,11 +98,12 @@ class Eye:
     
         self.upper_eyeside = new_eyesides[0:4]
         self.lower_eyeside = new_eyesides[4:8]
+        self.pupil_radius = new_eyesides[8]
 
         print self.lower_eyeside
 
         if self.pos_update_counter < 0:
-            radius = 0.22*rand.random() 
+            radius = 0.12*rand.random() 
             angle = 2*pi*rand.random() 
 
             self.radius = radius*math.cos(angle) + 0.3*radius*math.sin(angle)
@@ -312,7 +328,7 @@ def emotion_callback(data):
     context['angry'] = data.angry
     context['interest'] = data.interest
     new_emo = np.array([0, data.happy, data.angry, data.interest])
-    new_emo[0] = max(0, 1 - np.sum(new_emo))
+    new_emo[0] = max(0, 1 - np.sum(np.absolute(new_emo)))
     context['new_emo_vect'] = new_emo
     context_lock.release()
 
