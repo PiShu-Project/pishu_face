@@ -71,6 +71,21 @@ class Eye:
         ellapsed = new_time - self.prev_time
         self.prev_time = new_time
 
+        # update emotion
+
+        context['emo_vect'] = 0.8*context['emo_vect'] + 0.2*context['new_emo_vect'] 
+
+        # update eyesides
+
+        print context['emo_vect']
+
+        new_eyesides = np.dot(self.emo_mat, context['emo_vect'])
+    
+        self.upper_eyeside = new_eyesides[0:4]
+        self.lower_eyeside = new_eyesides[4:8]
+
+        print self.lower_eyeside
+
         if self.pos_update_counter < 0:
             radius = 0.22*rand.random() 
             angle = 2*pi*rand.random() 
@@ -103,9 +118,10 @@ class Eye:
         self.pos_update_counter -= ellapsed
 #		self.saccade_update_counter -= ellapsed
 
-        # update eyesides
+
 	
 
+        
 
     def pupil_mat(self):
 
@@ -238,6 +254,8 @@ class EyeWindow(Gtk.Window):
 
         # Draw the lower eyeside
 
+        print self.eye.lower_eyeside
+
         cr.set_source_rgb(0, 0, 0)
         cr.move_to(0.1, 1)
         cr.rel_line_to(0, self.eye.lower_eyeside[0])
@@ -254,7 +272,7 @@ class EyeWindow(Gtk.Window):
         cr.rel_curve_to(0.3, self.eye.lower_eyeside[1], 
                                 (0.8-0.3), self.eye.lower_eyeside[2], 
                                 0.8, self.eye.lower_eyeside[3])
-        cr.rel_line_to(0, -0.02)
+        cr.rel_line_to(0, -0.05)
         cr.rel_curve_to(-0.3, self.eye.lower_eyeside[2]-self.eye.lower_eyeside[3],
                                 -(0.8-0.3), self.eye.lower_eyeside[1]-self.eye.lower_eyeside[3], 
                                -0.8, -self.eye.lower_eyeside[3])
@@ -280,7 +298,7 @@ class EyeWindow(Gtk.Window):
         cr.rel_curve_to(0.3, self.eye.upper_eyeside[1], 
                                 (0.8-0.3), self.eye.upper_eyeside[2], 
                                 0.8, self.eye.upper_eyeside[3])
-        cr.rel_line_to(0, -0.02)
+        cr.rel_line_to(0, -0.05)
         cr.rel_curve_to(-0.3, self.eye.upper_eyeside[2]-self.eye.upper_eyeside[3],
                                 -(0.8-0.3), self.eye.upper_eyeside[1]-self.eye.upper_eyeside[3], 
                                -0.8, -self.eye.upper_eyeside[3])
@@ -293,13 +311,19 @@ def emotion_callback(data):
     context['happy'] = data.happy
     context['angry'] = data.angry
     context['interest'] = data.interest
+    new_emo = np.array([0, data.happy, data.angry, data.interest])
+    new_emo[0] = max(0, 1 - np.sum(new_emo))
+    context['new_emo_vect'] = new_emo
     context_lock.release()
 
 def main():
-
+    context_lock.acquire()
     context['happy'] = 0
     context['angry'] = 0
     context['interest'] = 0
+    context['new_emo_vect']  = np.array([0, 0, 1, 0])
+    context['emo_vect']  = np.array([1, 0, 0, 0])
+    context_lock.release()
 
     app = EyeWindow()
 
