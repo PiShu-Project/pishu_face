@@ -38,14 +38,14 @@ class Eye:
 
         # eye lids: all define the vertical pos, the first one is absolute coord.
         # the other ones are relatie to the first point
-        self.upper_eyelid = np.array([0.12, 0.25, 0.25, 0.0])
-        self.lower_eyelid = np.array([-0.20, -0.1, -0.1, 0.0])
+        self.upper_eyeside = np.array([0.12, 0.25, 0.25, 0.0])
+        self.lower_eyeside = np.array([-0.20, -0.1, -0.1, 0.0])
 
         # Matrix that contains the values of the different parameters as function
         # of the emotions states. Each column corresponds to an emotional 
         # state, each row corresponds to a parameter
         # columns: neutral, happy, angry, interest
-        # rows: upper_eyelid (4), lower_eyelid (4), pupil size (1)
+        # rows: upper_eyeside (4), lower_eyeside (4), pupil size (1)
         self.emo_mat = np.zeros((9, 4))
 
         # params for neutral
@@ -102,6 +102,8 @@ class Eye:
 
         self.pos_update_counter -= ellapsed
 #		self.saccade_update_counter -= ellapsed
+
+        # update eyesides
 	
 
 
@@ -234,39 +236,39 @@ class EyeWindow(Gtk.Window):
         cr.fill()
         cr.restore()
 
-        # Draw the lower eyelid
+        # Draw the lower eyeside
 
         cr.set_source_rgb(0, 0, 0)
         cr.move_to(0.1, 1)
-        cr.rel_line_to(0, self.eye.lower_eyelid[0])
-        cr.rel_curve_to(0.3, self.eye.lower_eyelid[1], 
-                                (0.8-0.3), self.eye.lower_eyelid[2], 
-                                0.8, self.eye.lower_eyelid[3])
+        cr.rel_line_to(0, self.eye.lower_eyeside[0])
+        cr.rel_curve_to(0.3, self.eye.lower_eyeside[1], 
+                                (0.8-0.3), self.eye.lower_eyeside[2], 
+                                0.8, self.eye.lower_eyeside[3])
         #cr.rel_curve_to(0.3, -0.1, (0.8-0.3), -0.1, 0.8, 0.0) #angry look
         cr.rel_line_to(0, 0.35)
         cr.close_path()
         cr.fill()
 
         cr.set_source_rgb(0.7, 0.2, 0)
-        cr.move_to(0.1, 1 + self.eye.lower_eyelid[0]+0.01)
-        cr.rel_curve_to(0.3, self.eye.lower_eyelid[1], 
-                                (0.8-0.3), self.eye.lower_eyelid[2], 
-                                0.8, self.eye.lower_eyelid[3])
+        cr.move_to(0.1, 1 + self.eye.lower_eyeside[0]+0.01)
+        cr.rel_curve_to(0.3, self.eye.lower_eyeside[1], 
+                                (0.8-0.3), self.eye.lower_eyeside[2], 
+                                0.8, self.eye.lower_eyeside[3])
         cr.rel_line_to(0, -0.02)
-        cr.rel_curve_to(-0.3, self.eye.lower_eyelid[2]-self.eye.lower_eyelid[3],
-                                -(0.8-0.3), self.eye.lower_eyelid[1]-self.eye.lower_eyelid[3], 
-                               -0.8, -self.eye.lower_eyelid[3])
+        cr.rel_curve_to(-0.3, self.eye.lower_eyeside[2]-self.eye.lower_eyeside[3],
+                                -(0.8-0.3), self.eye.lower_eyeside[1]-self.eye.lower_eyeside[3], 
+                               -0.8, -self.eye.lower_eyeside[3])
         cr.close_path()
         cr.fill()
 
-        # Draw the upper eyelid
+        # Draw the upper eyeside
 
         cr.set_source_rgb(0, 0, 0)
         cr.move_to(0.1, 0)
-        cr.rel_line_to(0, self.eye.upper_eyelid[0])
-        cr.rel_curve_to(0.3, self.eye.upper_eyelid[1], 
-                                (0.8-0.3), self.eye.upper_eyelid[2], 
-                                0.8, self.eye.upper_eyelid[3])
+        cr.rel_line_to(0, self.eye.upper_eyeside[0])
+        cr.rel_curve_to(0.3, self.eye.upper_eyeside[1], 
+                                (0.8-0.3), self.eye.upper_eyeside[2], 
+                                0.8, self.eye.upper_eyeside[3])
         #cr.rel_curve_to(0.3, 0.25, (0.8-0.3), 0.25, 0.8, 0.0) #angry look
         #cr.rel_curve_to(0.3, 0.25, (0.8-0.3), -0.25, 0.8, 0.1) #surprized look
         cr.rel_line_to(0, -0.35)
@@ -274,14 +276,14 @@ class EyeWindow(Gtk.Window):
         cr.fill()
 
         cr.set_source_rgb(0.7, 0.2, 0)
-        cr.move_to(0.1, self.eye.upper_eyelid[0]+0.01)
-        cr.rel_curve_to(0.3, self.eye.upper_eyelid[1], 
-                                (0.8-0.3), self.eye.upper_eyelid[2], 
-                                0.8, self.eye.upper_eyelid[3])
+        cr.move_to(0.1, self.eye.upper_eyeside[0]+0.01)
+        cr.rel_curve_to(0.3, self.eye.upper_eyeside[1], 
+                                (0.8-0.3), self.eye.upper_eyeside[2], 
+                                0.8, self.eye.upper_eyeside[3])
         cr.rel_line_to(0, -0.02)
-        cr.rel_curve_to(-0.3, self.eye.upper_eyelid[2]-self.eye.upper_eyelid[3],
-                                -(0.8-0.3), self.eye.upper_eyelid[1]-self.eye.upper_eyelid[3], 
-                               -0.8, -self.eye.upper_eyelid[3])
+        cr.rel_curve_to(-0.3, self.eye.upper_eyeside[2]-self.eye.upper_eyeside[3],
+                                -(0.8-0.3), self.eye.upper_eyeside[1]-self.eye.upper_eyeside[3], 
+                               -0.8, -self.eye.upper_eyeside[3])
         cr.close_path()
         cr.fill()
 
